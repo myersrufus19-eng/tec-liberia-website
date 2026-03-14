@@ -21,8 +21,32 @@ const PartnershipIntake: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send data to a backend or use EmailJS
-    console.log('Partnership Inquiry:', formData);
+    
+    // Construct mailto link for direct submission
+    const subject = `Partnership Inquiry: ${formData.partnershipType} - ${formData.organization}`;
+    const body = `
+Partnership Inquiry Details:
+---------------------------
+Full Name: ${formData.fullName}
+Position: ${formData.position}
+Organization: ${formData.organization}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Partnership Category: ${formData.partnershipType}
+
+Collaboration Proposal:
+---------------------------
+${formData.message || 'No specific proposal provided.'}
+
+---
+Submitted via TEC Liberia Website
+    `;
+
+    const mailtoUrl = `mailto:info@tecliberia.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Open the user's email client
+    window.location.href = mailtoUrl;
+    
     setSubmitted(true);
   };
 
@@ -57,7 +81,7 @@ const PartnershipIntake: React.FC = () => {
             <span className="group-hover:-translate-x-1 transition-transform mr-2">←</span> Back to Partnership Overview
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-playfair">Partnership Inquiry</h1>
-          <p className="text-slate-500 text-inter">Please provide your professional details below to start a collaboration with The Empowerment Cycle.</p>
+          <p className="text-slate-500 text-inter">Please provide your professional details below to start a collaboration with The Empowerment Circle Inc.</p>
         </div>
 
         <motion.form 

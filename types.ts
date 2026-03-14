@@ -5,6 +5,11 @@ export interface ThematicArea {
   context: string;
   description: string;
   focus: string[];
+  focusDetails?: {
+    id: string;
+    title: string;
+    content: string;
+  }[];
   image: string;
   impact?: string;
 }

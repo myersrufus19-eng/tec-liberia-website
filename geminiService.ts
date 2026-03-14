@@ -9,7 +9,7 @@ export const getTECResponse = async (userPrompt: string) => {
       model: "gemini-3-flash-preview",
       contents: userPrompt,
       config: {
-        systemInstruction: `You are a helpful assistant for "The Empowerment Cycle (TEC) - Liberia". 
+        systemInstruction: `You are a helpful assistant for "The Empowerment Circle Inc. (TEC) - Liberia". 
         TEC is a civil society organization focusing on women, girls, and youth empowerment. 
         Thematic areas: E-VAWG, Economic Empowerment, Girls' Education, Civic Engagement, and Climate Action.
         Provide professional, concise, and encouraging information based on these areas. 

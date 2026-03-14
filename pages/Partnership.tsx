@@ -31,7 +31,7 @@ const Partnership: React.FC = () => {
             transition={{ delay: 0.1 }}
             className="text-emerald-200/90 text-xl max-w-3xl mx-auto text-inter"
           >
-            Partner with The Empowerment Cycle (TEC) – Liberia to advance gender equality, youth empowerment, peacebuilding, climate justice, and inclusive governance.
+            Partner with The Empowerment Circle Inc. (TEC) – Liberia to advance gender equality, youth empowerment, peacebuilding, climate justice, and inclusive governance.
           </motion.p>
         </div>
       </section>
@@ -160,7 +160,7 @@ const Partnership: React.FC = () => {
           >
             <div className="relative z-10">
               <h3 className="text-3xl md:text-5xl font-bold mb-6 font-playfair">
-                Ready to Partner With The Empowerment Cycle?
+                Ready to Partner With The Empowerment Circle Inc.?
               </h3>
               <p className="mb-10 max-w-2xl mx-auto text-emerald-100 text-lg text-inter">
                 Let’s work together to empower women, girls, and youth and build resilient communities across Liberia.

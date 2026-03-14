@@ -1,17 +1,18 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
 import { THEMES } from "../constants";
 
 // Locally defined UI components to fix the module resolution error
-const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+// Fix: Make children optional to resolve TS error where children are not correctly detected in JSX
+const Card = ({ children, className = "" }: { children?: React.ReactNode; className?: string }) => (
   <div className={`bg-white shadow-lg rounded-2xl overflow-hidden ${className}`}>
     {children}
   </div>
 );
 
-const CardContent = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+// Fix: Make children optional to resolve TS error where children are not correctly detected in JSX
+const CardContent = ({ children, className = "" }: { children?: React.ReactNode; className?: string }) => (
   <div className={`p-8 ${className}`}>
     {children}
   </div>
@@ -42,6 +43,13 @@ export default function ThematicAreaPage() {
   // Try to find the specific theme based on the URL parameter
   const themeDetail = THEMES.find(t => t.id === id);
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   // If we are looking at a specific theme detail
   if (themeDetail) {
     return (
@@ -69,28 +77,70 @@ export default function ThematicAreaPage() {
           </div>
         </section>
 
-        <div className="max-w-4xl mx-auto px-6 -mt-16 relative z-20">
+        <div className="max-w-5xl mx-auto px-6 -mt-16 relative z-20">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <p className="text-xl text-slate-600 mb-10 italic border-l-4 border-emerald-500 bg-white/80 backdrop-blur-md p-8 rounded-r-3xl shadow-xl text-inter">
               {themeDetail.context}
             </p>
             
-            <Card className="mb-10 border border-gray-100">
+            <Card className="mb-12 border border-gray-100">
               <CardContent>
-                <h2 className="text-2xl font-bold mb-6 text-emerald-800 font-playfair">Program Overview</h2>
-                <p className="text-gray-700 leading-relaxed mb-10 text-inter text-lg">{themeDetail.description}</p>
+                <h2 className="text-3xl font-bold mb-8 text-emerald-800 font-playfair">Program Overview</h2>
+                <p className="text-gray-700 leading-relaxed mb-12 text-inter text-lg">{themeDetail.description}</p>
                 
-                <h3 className="text-xl font-bold mb-6 text-emerald-800 font-playfair">Our Strategic Focus</h3>
-                <ul className="grid md:grid-cols-2 gap-4 text-inter">
-                  {themeDetail.focus.map((item, i) => (
-                    <li key={i} className="flex items-start bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100/50 group hover:bg-white hover:shadow-lg transition-all">
-                      <span className="text-emerald-600 mr-4 font-bold text-xl group-hover:scale-125 transition-transform">·</span>
-                      <span className="text-emerald-900 text-sm font-medium leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                <h3 className="text-xl font-bold mb-6 text-emerald-800 font-playfair uppercase tracking-widest text-xs">Our Strategic Focus</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-inter">
+                  {themeDetail.focus.map((item, i) => {
+                    const detail = themeDetail.focusDetails?.[i];
+                    return (
+                      <button 
+                        key={i} 
+                        onClick={() => detail && scrollToSection(detail.id)}
+                        className={`text-left flex items-start p-5 rounded-2xl border transition-all ${
+                          detail 
+                          ? 'bg-emerald-50/50 border-emerald-100/50 cursor-pointer hover:bg-white hover:shadow-lg hover:border-emerald-500' 
+                          : 'bg-gray-50 border-gray-100 cursor-default'
+                        }`}
+                      >
+                        <span className="text-emerald-600 mr-4 font-bold text-xl group-hover:scale-125 transition-transform">·</span>
+                        <div className="flex-grow">
+                          <span className="text-emerald-900 text-sm font-bold block leading-relaxed">{item}</span>
+                          {detail && <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-tighter">View Story →</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
+
+            {/* Detailed Narratives Section */}
+            {themeDetail.focusDetails && themeDetail.focusDetails.length > 0 && (
+              <div className="space-y-12 mb-20">
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold text-slate-900 font-playfair">Programmatic Deep Dive</h2>
+                  <div className="w-16 h-1 bg-emerald-500 mx-auto mt-4 rounded-full"></div>
+                </div>
+                {themeDetail.focusDetails.map((detail) => (
+                  <motion.div 
+                    key={detail.id} 
+                    id={detail.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="bg-white rounded-[2rem] p-10 md:p-14 shadow-xl border-t-4 border-emerald-700"
+                  >
+                    <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6 font-playfair leading-tight">
+                      {detail.title}
+                    </h3>
+                    <div className="w-full h-px bg-slate-100 mb-8"></div>
+                    <p className="text-slate-600 text-lg leading-relaxed text-inter">
+                      {detail.content}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
             {themeDetail.impact && (
               <div className="bg-emerald-800 text-white p-12 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
@@ -112,7 +162,6 @@ export default function ThematicAreaPage() {
   // Fallback / Overview view
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
-      {/* HERO SECTION with background representing education and progress */}
       <section className="relative min-h-[60vh] flex items-center pt-24 pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
@@ -130,7 +179,9 @@ export default function ThematicAreaPage() {
               Transforming the lives of women, girls, and youth through a holistic framework of intervention and advocacy.
             </p>
             <div className="mt-10 flex flex-wrap gap-4 text-inter">
-              <Button>Partner With Us</Button>
+              <Link to="/partnership">
+                <Button>Partner With Us</Button>
+              </Link>
               <a href="mailto:info@tecliberia.org">
                 <Button variant="outline">Contact Our Team</Button>
               </a>
@@ -139,7 +190,6 @@ export default function ThematicAreaPage() {
         </div>
       </section>
 
-      {/* THEMATIC GRID */}
       <section className="bg-white py-24 px-6 relative z-20 -mt-10 rounded-t-[3rem] shadow-2xl">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
